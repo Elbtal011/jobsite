@@ -1,0 +1,64 @@
+<%- include('../partials/head', { title: 'Bewerbung Fakten | Admin' }) %>
+<main class="admin-dashboard">
+  <aside class="admin-sidebar">
+    <div>
+      <h2 class="admin-brand">Admin Bereich</h2>
+      <p class="admin-subtitle">Verwaltung und Pipeline</p>
+      <nav class="admin-nav">
+        <a class="admin-nav-item" href="/admin666/leads">Alle Leads</a>
+        <a class="admin-nav-item" href="/admin666/leads/application">Bewerbung Leads</a>
+        <a class="admin-nav-item" href="/admin666/leads/contact">Kontakt Leads</a>
+        <a class="admin-nav-item" href="/admin666/chats">Chats</a>
+        <a class="admin-nav-item" href="/admin666/users">Users</a>
+        <a class="admin-nav-item active" href="/admin666/job-facts">Bewerbung Fakten</a>
+      </nav>
+    </div>
+
+    <form method="post" action="/admin666/logout">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+      <button class="btn btn-secondary admin-logout" type="submit">Logout</button>
+    </form>
+  </aside>
+
+  <section class="page-shell admin-content">
+    <div class="admin-top">
+      <h1>Bewerbung Fakten</h1>
+    </div>
+
+    <% if (success) { %>
+      <div class="alert success"><%= success %></div>
+    <% } %>
+    <% if (error) { %>
+      <div class="alert error"><%= error %></div>
+    <% } %>
+
+    <article class="note-item" style="max-width:760px;">
+      <form method="post" action="/admin666/job-facts">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
+        <div class="form-card" style="box-shadow:none; border:0; padding:0;">
+          <label for="job-date">Datum</label>
+          <input id="job-date" name="date" type="text" maxlength="80" value="<%= jobFacts.date %>" />
+
+          <label for="job-salary">Gehalt</label>
+          <input id="job-salary" name="salary" type="text" maxlength="80" value="<%= jobFacts.salary %>" />
+
+          <label for="job-employment">Anstellung</label>
+          <input id="job-employment" name="employment" type="text" maxlength="80" value="<%= jobFacts.employment %>" />
+
+          <label for="job-experience">Vorerfahrung</label>
+          <input id="job-experience" name="experience" type="text" maxlength="80" value="<%= jobFacts.experience %>" />
+
+          <label for="job-deadline">Bewerbungsfrist</label>
+          <input id="job-deadline" name="deadline" type="text" maxlength="80" value="<%= jobFacts.deadline %>" />
+
+          <div style="margin-top:10px;">
+            <button class="btn btn-primary" type="submit">Speichern</button>
+          </div>
+        </div>
+      </form>
+    </article>
+  </section>
+</main>
+</body>
+</html>

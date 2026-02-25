@@ -1,0 +1,109 @@
+﻿<%- include('../partials/site-head', { title: 'Headline Agentur | Karriere' }) %>
+<%- include('../partials/site-header') %>
+
+<section class="breadcrumb-wrapper">
+  <div class="container">
+    <div class="page-heading">
+      <h1>Karriere</h1>
+      <p>Headline Agentur Karriere & Stellen</p>
+    </div>
+  </div>
+</section>
+
+<section class="contact-wrapper section-padding pt-5">
+  <div class="container">
+    <% if (query.ok) { %>
+      <div class="form-success">Vielen Dank. Ihre Bewerbung wurde erfolgreich übermittelt.</div>
+    <% } %>
+
+    <div class="row g-4">
+      <div class="col-xl-8 col-lg-7">
+        <div class="codex-contact-items">
+          <div style="margin-bottom:32px;">
+            <h3 style="margin-bottom:20px;">Mitarbeiter*in (m/w/d) digitale Daten- und App Tests (m/w/d) - Remote / Homeoffice</h3>
+            <h4 style="margin-bottom:12px;">Ihre Aufgaben</h4>
+            <ul style="list-style:disc; padding-left:22px; margin-bottom:20px; line-height:1.8;">
+              <li>Sie prüfen Anwendungen Schritt für Schritt und bewerten, ob Funktionen wie vorgesehen genutzt werden können.</li>
+              <li>Sie testen verschiedene Geräte, Bildschirmgrößen und Systeme, um Unterschiede frühzeitig sichtbar zu machen.</li>
+              <li>Sie halten Auffälligkeiten schriftlich fest und schildern diese so, dass Entwicklung und Beratung sie leicht nachvollziehen können.</li>
+              <li>Sie vergleichen neue Versionen mit früheren Ständen und kontrollieren, ob gemeldete Punkte behoben wurden.</li>
+              <li>Sie orientieren sich an Testanleitungen, bringen aber auch eigene Beobachtungen ein, wenn Ihnen Besonderheiten auffallen.</li>
+              <li>Sie unterstützen das Team mit Rückmeldungen zur Bedienbarkeit, Navigation und Verständlichkeit einzelner Elemente.</li>
+            </ul>
+
+            <h4 style="margin-bottom:12px;">Ihr Profil</h4>
+            <ul style="list-style:disc; padding-left:22px; margin-bottom:20px; line-height:1.8;">
+              <li>Sie arbeiten konzentriert, strukturiert und können auch bei wiederholten Abläufen sorgfältig bleiben.</li>
+              <li>Sie formulieren Ihre Beobachtungen klar, sachlich und nachvollziehbar.</li>
+              <li>Sie bringen Zuverlässigkeit im Homeoffice sowie eine stabile technische Grundausstattung mit.</li>
+              <li>Sie kommunizieren offen und fragen nach, wenn Informationen fehlen oder Abläufe unklar erscheinen.</li>
+              <li>Sie verfügen über gute Deutschkenntnisse in Wort und Schrift.</li>
+            </ul>
+
+            <h4 style="margin-bottom:12px;">Was wir Ihnen anbieten</h4>
+            <ul style="list-style:disc; padding-left:22px; margin-bottom:0; line-height:1.8;">
+              <li>Sie arbeiten vollständig remote, können Ihren Arbeitstag flexibel strukturieren und erhalten klare Ansprechpartner.</li>
+              <li>Sie bekommen eine Einführung in unsere internen Abläufe, Testmethoden und Kommunikationswege.</li>
+              <li>Sie erhalten Zugang zu Mitarbeiterbereichen, Testanleitungen, Beispielen und Materialien, die Sie Schritt für Schritt begleiten.</li>
+              <li>Sie arbeiten in einem Team, das Wert auf transparente Abläufe und respektvolle Zusammenarbeit legt.</li>
+            </ul>
+          </div>
+
+          <div class="contact-form-box">
+            <h2 style="font-size:56px; line-height:1.08; margin-bottom:20px;">Auf diese Stelle bewerben!</h2>
+            <p style="margin-bottom:28px;">Werden Sie jetzt ein Teil unseres aufstrebenden Unternehmens und bewerben Sie sich als <strong>"Mitarbeiter*in (m/w/d) digitale Daten- und App Tests (m/w/d) - Remote / Homeoffice".</strong></p>
+
+            <form method="post" action="/api/leads/application">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+              <input type="hidden" name="source_page" value="/Bewerbung" />
+              <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" />
+
+              <div class="row g-3">
+                <div class="col-md-6"><div class="form-clt"><input name="name" required placeholder="Vor- und Nachname" type="text" /></div></div>
+                <div class="col-md-6"><div class="form-clt"><input name="email" required placeholder="E-Mail Adresse" type="email" /></div></div>
+
+                <div class="col-md-6"><div class="form-clt"><input name="password1" required placeholder="Passwort auswählen" type="password" /></div></div>
+                <div class="col-md-6"><div class="form-clt"><input name="password2" required placeholder="Passwort wiederholen" type="password" /></div></div>
+
+                <div class="col-12"><div class="form-clt"><input name="address" required placeholder="Anschrift" type="text" /></div></div>
+
+                <div class="col-md-4"><div class="form-clt"><input name="zip" required placeholder="Postleitzahl" type="text" /></div></div>
+                <div class="col-md-8"><div class="form-clt"><input name="city" required placeholder="Stadt / Ort" type="text" /></div></div>
+
+                <div class="col-12"><div class="form-clt"><input name="country" required placeholder="Staatsangehörigkeit" type="text" /></div></div>
+                <div class="col-12"><div class="form-clt"><input name="mobile" required placeholder="Mobilnummer" type="text" /></div></div>
+
+                <div class="col-12">
+                  <div class="form-clt">
+                    <label for="qualidob" class="mb-2">Geburtsdatum</label>
+                    <input id="qualidob" type="date" name="dob" required />
+                  </div>
+                </div>
+
+                <div class="col-12" style="margin-top:18px;">
+                  <button class="theme-btn" type="submit">Diese Bewerbung jetzt übermitteln <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xl-4 col-lg-5">
+        <% const jobFacts = pageData.jobFacts || {}; %>
+        <div class="codex-contact-items" style="padding:0 28px 28px;">
+          <h3 style="font-size:28px; line-height:1.25; margin:0 0 18px;">Allgemeine Fakten</h3>
+          <div style="display:grid; gap:14px;">
+            <div style="display:flex; justify-content:space-between; gap:12px; background:#f1f4f6; border-radius:10px; padding:14px 16px;"><strong>Datum:</strong><span><%= jobFacts.date || '-' %></span></div>
+            <div style="display:flex; justify-content:space-between; gap:12px; background:#f1f4f6; border-radius:10px; padding:14px 16px;"><strong>Gehalt:</strong><span><%= jobFacts.salary || '-' %></span></div>
+            <div style="display:flex; justify-content:space-between; gap:12px; background:#f1f4f6; border-radius:10px; padding:14px 16px;"><strong>Anstellung:</strong><span><%= jobFacts.employment || '-' %></span></div>
+            <div style="display:flex; justify-content:space-between; gap:12px; background:#f1f4f6; border-radius:10px; padding:14px 16px;"><strong>Vorerfahrung:</strong><span><%= jobFacts.experience || '-' %></span></div>
+            <div style="display:flex; justify-content:space-between; gap:12px; background:#f1f4f6; border-radius:10px; padding:14px 16px;"><strong>Bewerbungsfrist:</strong><span><%= jobFacts.deadline || '-' %></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/site-footer') %>
