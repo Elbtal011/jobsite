@@ -281,3 +281,35 @@
     }
   });
 })();
+
+(function initSubtleReveal() {
+  const revealItems = Array.from(document.querySelectorAll('.subtle-reveal'));
+  if (revealItems.length === 0) {
+    return;
+  }
+
+  revealItems.forEach((el) => {
+    const rawDelay = Number(el.getAttribute('data-reveal-delay') || 0);
+    const safeDelay = Number.isFinite(rawDelay) ? Math.max(0, rawDelay) : 0;
+    el.style.setProperty('--reveal-delay', `${safeDelay}ms`);
+  });
+
+  const reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reducedMotion || !('IntersectionObserver' in window)) {
+    revealItems.forEach((el) => el.classList.add('is-visible'));
+    return;
+  }
+
+  const observer = new IntersectionObserver(
+    (entries, obs) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-visible');
+        obs.unobserve(entry.target);
+      });
+    },
+    { root: null, rootMargin: '0px 0px -8% 0px', threshold: 0.15 }
+  );
+
+  revealItems.forEach((el) => observer.observe(el));
+})();
