@@ -287,6 +287,7 @@
   if (revealItems.length === 0) {
     return;
   }
+  document.documentElement.classList.add('js-reveal');
 
   revealItems.forEach((el) => {
     const rawDelay = Number(el.getAttribute('data-reveal-delay') || 0);

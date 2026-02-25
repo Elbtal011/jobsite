@@ -461,18 +461,22 @@
       cursor: pointer;
     }
     .subtle-reveal {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .js-reveal .subtle-reveal {
       opacity: 0;
       transform: translateY(14px);
       transition: opacity 1500ms cubic-bezier(0.22, 1, 0.36, 1), transform 1500ms cubic-bezier(0.22, 1, 0.36, 1);
       transition-delay: var(--reveal-delay, 0ms);
       will-change: opacity, transform;
     }
-    .subtle-reveal.is-visible {
+    .js-reveal .subtle-reveal.is-visible {
       opacity: 1;
       transform: translateY(0);
     }
     @media (prefers-reduced-motion: reduce) {
-      .subtle-reveal {
+      .js-reveal .subtle-reveal {
         opacity: 1;
         transform: none;
         transition: none;
