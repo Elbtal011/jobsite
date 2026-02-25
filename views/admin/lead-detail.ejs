@@ -51,6 +51,7 @@
       <article class="note-item">
         <form class="form-inline" method="post" action="/admin666/leads/<%= lead.id %>/status">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+          <input type="hidden" id="verification-level-hidden" name="verification_level" value="<%= Number(lead.verification_level || 1) %>" />
           <label>Status</label>
           <select name="status">
             <option value="new" <%= lead.status === 'new' ? 'selected' : '' %>>new</option>
@@ -59,7 +60,7 @@
             <option value="closed" <%= lead.status === 'closed' ? 'selected' : '' %>>closed</option>
           </select>
           <label>Verification Level</label>
-          <select name="verification_level">
+          <select id="verification-level-select">
             <option value="1" <%= Number(lead.verification_level || 1) === 1 ? 'selected' : '' %>>1</option>
             <option value="2" <%= Number(lead.verification_level || 1) === 2 ? 'selected' : '' %>>2</option>
             <option value="3" <%= Number(lead.verification_level || 1) === 3 ? 'selected' : '' %>>3</option>
@@ -86,5 +87,15 @@
     </div>
   </section>
 </main>
+<script>
+  (function () {
+    const select = document.getElementById('verification-level-select');
+    const hidden = document.getElementById('verification-level-hidden');
+    if (!select || !hidden) return;
+    const sync = () => { hidden.value = select.value; };
+    select.addEventListener('change', sync);
+    sync();
+  })();
+</script>
 </body>
 </html>

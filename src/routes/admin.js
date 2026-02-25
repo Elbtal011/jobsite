@@ -290,14 +290,18 @@ router.get('/leads/:id', requireDb, requireAdmin, async (req, res) => {
 router.post('/leads/:id/status', requireDb, requireAdmin, validateCsrf, async (req, res) => {
   const allowed = ['new', 'contacted', 'in_review', 'closed'];
   const { status } = req.body;
-  const verificationLevel = Number.parseInt(String(req.body.verification_level || '1'), 10);
+  let verificationLevel = Number.parseInt(String(req.body.verification_level || ''), 10);
 
   if (!allowed.includes(status)) {
     return res.status(400).send('Ungültiger Status');
   }
 
   if (![1, 2, 3].includes(verificationLevel)) {
-    return res.status(400).send('Ungültige Verifizierungsstufe');
+    const existing = await pool.query('SELECT COALESCE(verification_level, 1) AS verification_level FROM leads WHERE id = $1', [req.params.id]);
+    if (existing.rowCount === 0) {
+      return res.status(404).send('Lead nicht gefunden');
+    }
+    verificationLevel = Number(existing.rows[0].verification_level) || 1;
   }
 
   await pool.query('UPDATE leads SET status = $1, verification_level = $2, updated_at = NOW() WHERE id = $3', [
