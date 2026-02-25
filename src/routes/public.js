@@ -4,6 +4,7 @@ const { pool } = require('../db');
 const { appState } = require('../state');
 const { validateCsrf } = require('../middleware/csrf');
 const { getJobFacts } = require('../jobFacts');
+const { sendContactNotification } = require('../utils/mailer');
 
 const router = express.Router();
 
@@ -100,6 +101,19 @@ router.post('/api/leads/contact', submitLimiter, validateCsrf, async (req, res) 
      VALUES ('contact', $1, $2, $3, $4, $5, $6)`,
     [contactName, contactEmail, contactPhone || null, mergedMessage, source_page || '/Kontakt', formPayload]
   );
+
+  try {
+    await sendContactNotification({
+      name: contactName,
+      email: contactEmail,
+      phone: contactPhone || '',
+      subject: subject ? subject.trim() : '',
+      message: mergedMessage,
+      sourcePage: source_page || '/Kontakt',
+    });
+  } catch (mailError) {
+    console.error('Kontakt-E-Mail konnte nicht gesendet werden:', mailError.message);
+  }
 
   return res.redirect('/Kontakt?ok=1');
 });

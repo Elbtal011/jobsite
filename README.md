@@ -52,6 +52,16 @@ Professional website and backend platform for Headline Agentur, including lead m
 - `PORT`
 - `NODE_ENV`
 
+## Optional SMTP (Kontakt notifications)
+- `SMTP_HOST`
+- `SMTP_PORT` (default `465`)
+- `SMTP_SECURE` (`true` for SSL/465)
+- `SMTP_USER`
+- `SMTP_PASS`
+- `SMTP_TLS_REJECT_UNAUTHORIZED` (default `true`)
+- `MAIL_FROM`
+- `MAIL_TO`
+
 ## Deployment Notes
 - Platform-ready for Railway or any Node hosting.
 - Start command: `npm start`
