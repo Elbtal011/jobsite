@@ -13,9 +13,19 @@ const { accountRouter } = require('./routes/account');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const isProd = process.env.NODE_ENV === 'production';
+
+if (isProd && (!process.env.SESSION_SECRET || process.env.SESSION_SECRET === 'change_me')) {
+  throw new Error('SESSION_SECRET must be set to a strong value in production.');
+}
+
+if (isProd && (!process.env.ADMIN_USERNAME || !process.env.ADMIN_PASSWORD)) {
+  throw new Error('ADMIN_USERNAME and ADMIN_PASSWORD must be configured in production.');
+}
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '..', 'views'));
+app.set('trust proxy', 1);
 
 app.use(
   helmet({
@@ -27,13 +37,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(
   session({
+    name: 'ha.sid',
     secret: process.env.SESSION_SECRET || 'change_me',
     resave: false,
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
       sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production',
+      secure: isProd,
       maxAge: 1000 * 60 * 60 * 8,
     },
   })

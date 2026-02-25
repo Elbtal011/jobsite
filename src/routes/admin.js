@@ -2,6 +2,7 @@
 const path = require('path');
 const express = require('express');
 const multer = require('multer');
+const { rateLimit } = require('express-rate-limit');
 const { stringify } = require('csv-stringify/sync');
 const { pool } = require('../db');
 const { appState } = require('../state');
@@ -13,6 +14,11 @@ const { docTypeLabel } = require('./account');
 const router = express.Router();
 const uploadDir = path.join(__dirname, '..', '..', 'uploads', 'chat');
 fs.mkdirSync(uploadDir, { recursive: true });
+const adminLoginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 20,
+  message: 'Zu viele Login-Versuche. Bitte später erneut versuchen.',
+});
 
 const allowedExtensions = new Set(['.jpg', '.jpeg', '.png', '.webp', '.pdf', '.doc', '.docx', '.txt']);
 const allowedMimeTypes = new Set([
@@ -157,11 +163,19 @@ router.get('/login', (req, res) => {
   return res.render('admin/login', { submittedUsername: '', rememberLogin: true });
 });
 
-router.post('/login', validateCsrf, (req, res) => {
+router.post('/login', adminLoginLimiter, validateCsrf, (req, res) => {
   const { username, password } = req.body;
   const rememberLogin = req.body.rememberLogin === '1';
-  const adminUsername = (process.env.ADMIN_USERNAME || 'admin').trim();
-  const adminPassword = process.env.ADMIN_PASSWORD || 'pc~Z347L6N@F';
+  const adminUsername = String(process.env.ADMIN_USERNAME || '').trim();
+  const adminPassword = String(process.env.ADMIN_PASSWORD || '');
+
+  if (!adminUsername || !adminPassword) {
+    return res.status(503).render('admin/login', {
+      error: 'Admin Login ist nicht konfiguriert.',
+      submittedUsername: (username || '').trim(),
+      rememberLogin,
+    });
+  }
 
   if ((username || '').trim() !== adminUsername || (password || '') !== adminPassword) {
     return res.status(401).render('admin/login', {

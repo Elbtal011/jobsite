@@ -1,12 +1,15 @@
-# Headline Agentur Clone + Lead Backend
+# Headline Agentur Website + Backend
 
-## Stack
-- Node.js + Express
-- EJS templates
-- PostgreSQL (Railway-ready)
+Professional website and backend platform for Headline Agentur, including lead management, live chat, user accounts, document handling, and admin operations.
 
-## Features
-- Public pages matching original route structure:
+## Tech Stack
+- Node.js
+- Express
+- EJS
+- PostgreSQL
+
+## Core Features
+- Public website routes:
   - `/index.php`
   - `/Unternehmen`
   - `/Fachgebiete`
@@ -14,43 +17,50 @@
   - `/Kontakt`
   - `/Datenschutz`
   - `/Impressum`
-- Lead capture forms (Kontakt + Bewerbung)
-- Persistent lead storage in Postgres
-- Admin panel:
+- Lead capture and storage (Kontakt + Bewerbung)
+- Live chat with onboarding flow and file attachments
+- User registration, login, profile management, and document uploads
+- Admin backend:
   - Login at `/admin666/login`
-  - List/filter leads
-  - Lead detail + status updates
-  - Notes
+  - Lead pipeline and detail views
+  - Chat management
+  - User management with detail view and document visibility
+  - Bewerbung Fakten management
   - CSV export (`/admin666/leads-export.csv`)
 
-## Setup
-1. Copy `.env.example` to `.env` and fill values.
-2. Ensure PostgreSQL is running and `DATABASE_URL` is valid.
-3. Install dependencies:
+## Local Setup
+1. Create `.env` from `.env.example`.
+2. Ensure PostgreSQL is running and `DATABASE_URL` points to your database.
+3. Install packages:
    ```bash
    npm install
    ```
-4. Start app:
+4. Run database initialization:
+   ```bash
+   npm start
+   ```
+5. Start development server:
    ```bash
    npm run dev
    ```
 
-## Important Environment Variables
+## Required Environment Variables
 - `DATABASE_URL`
 - `SESSION_SECRET`
 - `ADMIN_USERNAME`
 - `ADMIN_PASSWORD`
 - `PORT`
+- `NODE_ENV`
 
-## Railway Notes
-- Create one web service for this app.
-- Add PostgreSQL service/plugin.
-- Set environment variables in Railway.
+## Deployment Notes
+- Platform-ready for Railway or any Node hosting.
 - Start command: `npm start`
-- Healthcheck endpoint: `/health`
+- Health endpoint: `/health`
+- Configure all environment variables in your hosting provider.
 
-## Security Included
-- Basic rate limiting for lead submission
-- CSRF protection for form posts
-- Honeypot anti-spam field
-- Helmet + session hardening defaults
+## Security
+- CSRF protection
+- Rate limiting on sensitive endpoints
+- Honeypot spam protection
+- Helmet middleware
+- Session cookie hardening
