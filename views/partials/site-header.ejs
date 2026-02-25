@@ -47,6 +47,13 @@
                   <li class="<%= pageData.currentPath === '/Fachgebiete' ? 'active' : '' %>"><a href="/Fachgebiete">Fachgebiete</a></li>
                   <li class="<%= pageData.currentPath === '/Bewerbung' ? 'active' : '' %>"><a href="/Bewerbung">Karriere & Stellen</a></li>
                   <li class="<%= pageData.currentPath === '/Kontakt' ? 'active' : '' %>"><a href="/Kontakt">Kontakt / Kundendienst</a></li>
+                  <li class="mobile-only-profile">
+                    <% if (user) { %>
+                      <a href="/konto/profil">Mein Profil</a>
+                    <% } else { %>
+                      <a href="/konto/login">Profil Login</a>
+                    <% } %>
+                  </li>
                 </ul>
               </nav>
             </div>
