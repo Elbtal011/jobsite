@@ -256,3 +256,28 @@
   form.addEventListener('submit', sendMessage);
   loadSession();
 })();
+
+(function initMobileMenu() {
+  const headerMain = document.querySelector('.header-main');
+  const toggle = document.querySelector('.header-main .sidebar__toggle');
+  if (!headerMain || !toggle) {
+    return;
+  }
+
+  const closeMenu = () => headerMain.classList.remove('mobile-menu-open');
+
+  toggle.addEventListener('click', (event) => {
+    event.preventDefault();
+    headerMain.classList.toggle('mobile-menu-open');
+  });
+
+  document.querySelectorAll('.header-main .main-menu a').forEach((link) => {
+    link.addEventListener('click', closeMenu);
+  });
+
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 1199) {
+      closeMenu();
+    }
+  });
+})();
