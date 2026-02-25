@@ -50,7 +50,13 @@ app.use(
   })
 );
 app.use(ensureCsrfToken);
-app.use(express.static(path.join(__dirname, '..', 'public')));
+app.use(
+  express.static(path.join(__dirname, '..', 'public'), {
+    etag: true,
+    lastModified: true,
+    maxAge: '7d',
+  })
+);
 
 app.use((req, res, next) => {
   res.locals.query = req.query;
