@@ -13,7 +13,7 @@ async function initDb() {
   } catch (err) {
     appState.dbAvailable = false;
     console.warn('DB nicht verfügbar. App läuft im Read-only Vorschau-Modus.');
-    console.warn(err.message);
+    console.warn(err && err.message ? err.message : err);
     return;
   }
 
