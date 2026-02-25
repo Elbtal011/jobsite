@@ -79,7 +79,7 @@
             <p class="account-muted">Laden Sie angeforderte Unterlagen hoch, zum Beispiel Ausweis oder Gehaltsnachweise.</p>
           </header>
 
-          <form method="post" action="/konto/profil/dokumente" enctype="multipart/form-data">
+          <form method="post" action="/konto/profil/dokumente?_csrf=<%= encodeURIComponent(csrfToken) %>" enctype="multipart/form-data">
             <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
             <div class="account-form-grid">
               <div class="account-field">

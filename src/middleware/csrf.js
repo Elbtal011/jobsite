@@ -11,8 +11,9 @@ function ensureCsrfToken(req, res, next) {
 }
 
 function validateCsrf(req, res, next) {
-  const token = req.body?._csrf || req.get('x-csrf-token');
-  if (!token || token !== req.session.csrfToken) {
+  const token = String(req.body?._csrf || req.get('x-csrf-token') || req.query?._csrf || '').trim();
+  const expected = String(req.session?.csrfToken || '').trim();
+  if (!token || !expected || token !== expected) {
     return res.status(403).send('Ungültiger CSRF Token. Bitte Seite neu laden.');
   }
   return next();

@@ -352,7 +352,7 @@ router.post('/konto/profil', requireUser, validateCsrf, async (req, res) => {
   });
 });
 
-router.post('/konto/profil/dokumente', requireUser, validateCsrf, uploadUserDocument.single('document_file'), async (req, res) => {
+router.post('/konto/profil/dokumente', requireUser, uploadUserDocument.single('document_file'), validateCsrf, async (req, res) => {
   const selectedType = String(req.body.doc_type || '').trim();
   const allowedTypes = new Set(docTypeOptions.map((x) => x.value));
 
