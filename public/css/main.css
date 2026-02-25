@@ -463,6 +463,12 @@ td {
   color: #166534;
 }
 
+.status-verification {
+  margin-left: 0.45rem;
+  background: #e8f0ff;
+  color: #1d4ed8;
+}
+
 .form-inline {
   margin: 1rem 0;
   display: flex;

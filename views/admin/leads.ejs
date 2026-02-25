@@ -76,7 +76,10 @@
                 <td><%= lead.type %></td>
                 <td><%= lead.full_name %></td>
                 <td><%= lead.email %></td>
-                <td><span class="status status-<%= lead.status %>"><%= lead.status %></span></td>
+                <td>
+                  <span class="status status-<%= lead.status %>"><%= lead.status %></span>
+                  <span class="status status-verification">V<%= Number(lead.verification_level || 1) %></span>
+                </td>
                 <td><%= lead.source_page %></td>
                 <td><%= new Date(lead.created_at).toLocaleString('de-DE') %></td>
                 <td><a class="admin-link" href="/admin666/leads/<%= lead.id %>">Details</a></td>

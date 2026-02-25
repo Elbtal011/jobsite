@@ -26,6 +26,16 @@ CREATE TABLE IF NOT EXISTS leads (
 ALTER TABLE leads
 ADD COLUMN IF NOT EXISTS form_payload JSONB;
 
+ALTER TABLE leads
+ADD COLUMN IF NOT EXISTS verification_level SMALLINT;
+
+UPDATE leads
+SET verification_level = 1
+WHERE verification_level IS NULL;
+
+ALTER TABLE leads
+ALTER COLUMN verification_level SET DEFAULT 1;
+
 CREATE TABLE IF NOT EXISTS lead_notes (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   lead_id UUID NOT NULL REFERENCES leads(id) ON DELETE CASCADE,

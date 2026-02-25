@@ -225,7 +225,7 @@ async function renderLeadsList(req, res, fixedType = '') {
   }
 
   const whereSql = where.length > 0 ? `WHERE ${where.join(' AND ')}` : '';
-  const query = `SELECT id, type, full_name, email, phone, status, source_page, created_at
+  const query = `SELECT id, type, full_name, email, phone, status, COALESCE(verification_level, 1) AS verification_level, source_page, created_at
                  FROM leads
                  ${whereSql}
                  ORDER BY created_at DESC`;
@@ -290,12 +290,21 @@ router.get('/leads/:id', requireDb, requireAdmin, async (req, res) => {
 router.post('/leads/:id/status', requireDb, requireAdmin, validateCsrf, async (req, res) => {
   const allowed = ['new', 'contacted', 'in_review', 'closed'];
   const { status } = req.body;
+  const verificationLevel = Number.parseInt(String(req.body.verification_level || '1'), 10);
 
   if (!allowed.includes(status)) {
     return res.status(400).send('Ungültiger Status');
   }
 
-  await pool.query('UPDATE leads SET status = $1, updated_at = NOW() WHERE id = $2', [status, req.params.id]);
+  if (![1, 2, 3].includes(verificationLevel)) {
+    return res.status(400).send('Ungültige Verifizierungsstufe');
+  }
+
+  await pool.query('UPDATE leads SET status = $1, verification_level = $2, updated_at = NOW() WHERE id = $3', [
+    status,
+    verificationLevel,
+    req.params.id,
+  ]);
   return res.redirect(`/admin666/leads/${req.params.id}`);
 });
 
@@ -316,7 +325,7 @@ router.post('/leads/:id/notes', requireDb, requireAdmin, validateCsrf, async (re
 
 router.get('/leads-export.csv', requireDb, requireAdmin, async (req, res) => {
   const result = await pool.query(
-    `SELECT id, type, full_name, email, phone, message, birth_date, status, source_page, created_at
+    `SELECT id, type, full_name, email, phone, message, birth_date, status, verification_level, source_page, created_at
      FROM leads
      ORDER BY created_at DESC`
   );
