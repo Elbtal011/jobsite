@@ -8,7 +8,7 @@ const { pool } = require('../db');
 const { appState } = require('../state');
 const { requireAdmin } = require('../middleware/auth');
 const { validateCsrf } = require('../middleware/csrf');
-const { getJobFacts, saveJobFacts } = require('../jobFacts');
+const { getJobs, getJobBySlug, upsertJob, deleteJob } = require('../jobs');
 const { docTypeLabel } = require('./account');
 
 const router = express.Router();
@@ -98,6 +98,13 @@ function formatDateOnly(value) {
 
   const str = String(value);
   return str.length >= 10 ? str.slice(0, 10) : str;
+}
+
+function parseLinesFromTextarea(value) {
+  return String(value || '')
+    .split(/\r?\n/)
+    .map((entry) => entry.trim())
+    .filter(Boolean);
 }
 
 function requireDb(_req, res, next) {
@@ -510,34 +517,114 @@ router.get('/chats/:id', requireDb, requireAdmin, async (req, res) => {
   });
 });
 
-router.get('/job-facts', requireDb, requireAdmin, async (_req, res) => {
-  const jobFacts = await getJobFacts();
-  return res.render('admin/job-facts', {
-    section: 'job_facts',
-    jobFacts,
-    success: '',
-    error: '',
+router.get('/jobs', requireAdmin, async (req, res) => {
+  const jobs = await getJobs();
+  const success =
+    req.query.ok === '1'
+      ? 'Stelle wurde gespeichert.'
+      : req.query.deleted === '1'
+        ? 'Stelle wurde geloescht.'
+        : req.query.bulkDeleted === '1'
+          ? 'Ausgewaehlte Stellen wurden geloescht.'
+          : '';
+  const error = req.query.error === '1' ? 'Speichern fehlgeschlagen. Bitte erneut versuchen.' : '';
+  return res.render('admin/jobs', {
+    section: 'jobs',
+    jobs,
+    success,
+    error,
   });
 });
 
-router.post('/job-facts', requireDb, requireAdmin, validateCsrf, async (req, res) => {
-  try {
-    const jobFacts = await saveJobFacts(req.body);
-    return res.render('admin/job-facts', {
-      section: 'job_facts',
-      jobFacts,
-      success: 'Bewerbungsdaten wurden gespeichert.',
-      error: '',
-    });
-  } catch (_err) {
-    const jobFacts = await getJobFacts();
-    return res.status(500).render('admin/job-facts', {
-      section: 'job_facts',
-      jobFacts,
-      success: '',
-      error: 'Speichern fehlgeschlagen. Bitte erneut versuchen.',
-    });
+router.get('/jobs/new', requireAdmin, (_req, res) => {
+  return res.render('admin/job-form', {
+    section: 'jobs',
+    isEdit: false,
+    formAction: '/admin666/jobs',
+    submitLabel: 'Stelle erstellen',
+    title: '',
+    slug: '',
+    summary: '',
+    tasks: '',
+    profile: '',
+    offer: '',
+    date: '',
+    salary: '',
+    employment: '',
+    experience: '',
+    deadline: '',
+  });
+});
+
+router.get('/jobs/:slug/edit', requireAdmin, async (req, res) => {
+  const job = await getJobBySlug(req.params.slug);
+  if (!job) {
+    return res.status(404).send('Stelle nicht gefunden');
   }
+
+  return res.render('admin/job-form', {
+    section: 'jobs',
+    isEdit: true,
+    formAction: '/admin666/jobs',
+    submitLabel: 'Aenderungen speichern',
+    originalSlug: job.slug,
+    title: job.title || '',
+    slug: job.slug || '',
+    summary: job.summary || '',
+    tasks: (job.tasks || []).join('\n'),
+    profile: (job.profile || []).join('\n'),
+    offer: (job.offer || []).join('\n'),
+    date: (job.facts && job.facts.date) || '',
+    salary: (job.facts && job.facts.salary) || '',
+    employment: (job.facts && job.facts.employment) || '',
+    experience: (job.facts && job.facts.experience) || '',
+    deadline: (job.facts && job.facts.deadline) || '',
+  });
+});
+
+router.post('/jobs', requireAdmin, validateCsrf, async (req, res) => {
+  try {
+    await upsertJob(
+      {
+        slug: req.body.slug,
+        title: req.body.title,
+        summary: req.body.summary,
+        tasks: parseLinesFromTextarea(req.body.tasks),
+        profile: parseLinesFromTextarea(req.body.profile),
+        offer: parseLinesFromTextarea(req.body.offer),
+        facts: {
+          date: req.body.date,
+          salary: req.body.salary,
+          employment: req.body.employment,
+          experience: req.body.experience,
+          deadline: req.body.deadline,
+        },
+      },
+      req.body.original_slug
+    );
+    return res.redirect('/admin666/jobs?ok=1');
+  } catch (_err) {
+    return res.redirect('/admin666/jobs?error=1');
+  }
+});
+
+router.post('/jobs/:slug/delete', requireAdmin, validateCsrf, async (req, res) => {
+  await deleteJob(req.params.slug);
+  return res.redirect('/admin666/jobs?deleted=1');
+});
+
+router.post('/jobs/delete-selected', requireAdmin, validateCsrf, async (req, res) => {
+  const raw = Array.isArray(req.body.slugs) ? req.body.slugs : req.body.slugs ? [req.body.slugs] : [];
+  for (const slug of raw) {
+    if (slug && String(slug).trim()) {
+      await deleteJob(String(slug).trim());
+    }
+  }
+  return res.redirect('/admin666/jobs?bulkDeleted=1');
+});
+
+router.get('/job-facts', requireAdmin, (_req, res) => {
+  return res.redirect('/admin666/jobs');
 });
 
 router.post('/chats/delete-selected', requireDb, requireAdmin, validateCsrf, async (req, res) => {

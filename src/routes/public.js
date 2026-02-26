@@ -3,7 +3,7 @@ const { rateLimit } = require('express-rate-limit');
 const { pool } = require('../db');
 const { appState } = require('../state');
 const { validateCsrf } = require('../middleware/csrf');
-const { getJobFacts } = require('../jobFacts');
+const { getJobs, getJobBySlug } = require('../jobs');
 const { sendContactNotification } = require('../utils/mailer');
 
 const router = express.Router();
@@ -57,8 +57,16 @@ router.get('/Fachgebiete', (req, res) => {
 });
 
 router.get('/Bewerbung', async (req, res) => {
-  const jobFacts = await getJobFacts();
-  renderPage(res, 'pages/bewerbung', { currentPath: '/Bewerbung', jobFacts });
+  const jobs = await getJobs();
+  renderPage(res, 'pages/bewerbung', { currentPath: '/Bewerbung', jobs });
+});
+
+router.get('/Bewerbung/:slug', async (req, res) => {
+  const job = await getJobBySlug(req.params.slug);
+  if (!job) {
+    return res.status(404).render('pages/404', { pageData: { currentPath: req.path } });
+  }
+  return renderPage(res, 'pages/bewerbung-detail', { currentPath: '/Bewerbung', job });
 });
 
 router.get('/Kontakt', (req, res) => {
@@ -148,7 +156,9 @@ router.post('/api/leads/application', submitLimiter, validateCsrf, async (req, r
   } = req.body;
 
   if (website) {
-    return res.redirect('/Bewerbung?ok=1');
+    const redirectTarget =
+      typeof source_page === 'string' && source_page.startsWith('/') ? source_page.trim() : '/Bewerbung';
+    return res.redirect(`${redirectTarget}${redirectTarget.includes('?') ? '&' : '?'}ok=1`);
   }
 
   const applicantName =
@@ -189,7 +199,8 @@ router.post('/api/leads/application', submitLimiter, validateCsrf, async (req, r
     ]
   );
 
-  return res.redirect('/Bewerbung?ok=1');
+  const redirectTarget = typeof source_page === 'string' && source_page.startsWith('/') ? source_page.trim() : '/Bewerbung';
+  return res.redirect(`${redirectTarget}${redirectTarget.includes('?') ? '&' : '?'}ok=1`);
 });
 
 router.post('/api/leads/newsletter', submitLimiter, validateCsrf, async (req, res) => {
